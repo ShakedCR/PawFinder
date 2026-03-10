@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/loginFragment">
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.pawfinder.app.ui.auth.LoginFragment"
+        android:label="Login" />
+
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="com.pawfinder.app.ui.auth.RegisterFragment"
+        android:label="Register" />
+
+    <fragment
+        android:id="@+id/feedFragment"
+        android:name="com.pawfinder.app.ui.feed.FeedFragment"
+        android:label="Home" />
+
+    <fragment
+        android:id="@+id/postDetailsFragment"
+        android:name="com.pawfinder.app.ui.post.PostDetailsFragment"
+        android:label="Post Details" />
+
+    <fragment
+        android:id="@+id/createPostFragment"
+        android:name="com.pawfinder.app.ui.post.CreatePostFragment"
+        android:label="Create Post" />
+
+    <fragment
+        android:id="@+id/myPostsFragment"
+        android:name="com.pawfinder.app.ui.myposts.MyPostsFragment"
+        android:label="My Posts" />
+
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.pawfinder.app.ui.profile.ProfileFragment"
+        android:label="Profile" />
+
+    <fragment
+        android:id="@+id/editProfileFragment"
+        android:name="com.pawfinder.app.ui.profile.EditProfileFragment"
+        android:label="Edit Profile" />
+
+    <fragment
+        android:id="@+id/editPostFragment"
+        android:name="com.pawfinder.app.ui.post.EditPostFragment"
+        android:label="Edit Post" />
+
+</navigation>
