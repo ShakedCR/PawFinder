@@ -33,6 +33,11 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         setupClickListeners()
     }
 
+    override fun onStart() {
+        super.onStart()
+        redirectIfUserAlreadyLoggedIn()
+    }
+
     private fun initViews(view: View) {
         tilEmail = view.findViewById(R.id.tilLoginEmail)
         tilPassword = view.findViewById(R.id.tilLoginPassword)
@@ -49,6 +54,14 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
         btnLogin.setOnClickListener {
             handleLoginClick()
+        }
+    }
+
+    private fun redirectIfUserAlreadyLoggedIn() {
+        val currentUser = auth.currentUser
+
+        if (currentUser != null) {
+            findNavController().navigate(R.id.action_loginFragment_to_feedFragment)
         }
     }
 
