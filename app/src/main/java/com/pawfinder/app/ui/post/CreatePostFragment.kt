@@ -1,10 +1,16 @@
 package com.pawfinder.app.ui.post
 
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -20,6 +26,10 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
     private lateinit var postViewModel: PostViewModel
     private lateinit var auth: FirebaseAuth
 
+    private lateinit var rvSelectedImages: RecyclerView
+    private lateinit var btnSelectImages: MaterialButton
+    private lateinit var tvImageError: TextView
+
     private lateinit var tilPetName: TextInputLayout
     private lateinit var tilPetType: TextInputLayout
     private lateinit var tilStatus: TextInputLayout
@@ -33,6 +43,20 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
     private lateinit var etLocation: TextInputEditText
 
     private lateinit var btnCreatePost: MaterialButton
+    private lateinit var selectedImagesAdapter: SelectedImagesAdapter
+
+    private val selectedImageUris = mutableListOf<Uri>()
+
+    private val pickMultipleImagesLauncher = registerForActivityResult(
+        ActivityResultContracts.PickMultipleVisualMedia(5)
+    ) { uris ->
+        if (uris.isNotEmpty()) {
+            selectedImageUris.clear()
+            selectedImageUris.addAll(uris)
+            tvImageError.visibility = View.GONE
+            selectedImagesAdapter.submitList(selectedImageUris.toList())
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -41,6 +65,7 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
 
         initViewModel()
         initViews(view)
+        setupRecyclerView()
         setupClickListeners()
     }
 
@@ -53,6 +78,10 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
     }
 
     private fun initViews(view: View) {
+        rvSelectedImages = view.findViewById(R.id.rvSelectedImages)
+        btnSelectImages = view.findViewById(R.id.btnSelectImages)
+        tvImageError = view.findViewById(R.id.tvImageError)
+
         tilPetName = view.findViewById(R.id.tilPetName)
         tilPetType = view.findViewById(R.id.tilPetType)
         tilStatus = view.findViewById(R.id.tilStatus)
@@ -68,10 +97,40 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
         btnCreatePost = view.findViewById(R.id.btnCreatePost)
     }
 
+    private fun setupRecyclerView() {
+        selectedImagesAdapter = SelectedImagesAdapter { uri ->
+            removeSelectedImage(uri)
+        }
+
+        rvSelectedImages.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        rvSelectedImages.adapter = selectedImagesAdapter
+    }
+
+    private fun removeSelectedImage(uri: Uri) {
+        selectedImageUris.remove(uri)
+        selectedImagesAdapter.submitList(selectedImageUris.toList())
+
+        if (selectedImageUris.isEmpty()) {
+            tvImageError.visibility = View.VISIBLE
+        }
+    }
+
     private fun setupClickListeners() {
+        btnSelectImages.setOnClickListener {
+            openImagePicker()
+        }
+
         btnCreatePost.setOnClickListener {
             handleCreatePost()
         }
+    }
+
+    private fun openImagePicker() {
+        // Allow the user to select up to 5 images from the device gallery
+        pickMultipleImagesLauncher.launch(
+            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+        )
     }
 
     private fun handleCreatePost() {
@@ -91,6 +150,8 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
         val userId = currentUser?.uid ?: "unknown_user"
         val userName = currentUser?.displayName ?: "PawFinder User"
 
+        val imagesAsSingleString = selectedImageUris.joinToString(",") { it.toString() }
+
         val post = Post(
             id = UUID.randomUUID().toString(),
             userId = userId,
@@ -100,7 +161,7 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
             petType = petType,
             status = status,
             description = description,
-            imageUrl = "",
+            imageUrl = imagesAsSingleString,
             location = location,
             timestamp = System.currentTimeMillis()
         )
@@ -119,6 +180,11 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
         location: String
     ): Boolean {
         var isValid = true
+
+        if (selectedImageUris.isEmpty()) {
+            tvImageError.visibility = View.VISIBLE
+            isValid = false
+        }
 
         if (petName.isBlank()) {
             tilPetName.error = "Pet name is required"
@@ -149,6 +215,7 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
     }
 
     private fun clearErrors() {
+        tvImageError.visibility = View.GONE
         tilPetName.error = null
         tilPetType.error = null
         tilStatus.error = null
@@ -157,6 +224,9 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
     }
 
     private fun clearForm() {
+        selectedImageUris.clear()
+        selectedImagesAdapter.submitList(emptyList())
+
         etPetName.text?.clear()
         etPetType.text?.clear()
         etStatus.text?.clear()
