@@ -12,15 +12,22 @@
         android:contentDescription="Selected image"
         android:scaleType="centerCrop" />
 
-    <ImageButton
+    <FrameLayout
         android:id="@+id/btnRemoveImage"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
         android:layout_gravity="top|end"
         android:layout_margin="4dp"
-        android:background="@android:color/transparent"
-        android:contentDescription="Remove image"
-        android:padding="2dp"
-        android:src="@android:drawable/ic_delete" />
+        android:background="@drawable/bg_remove_image_button"
+        android:elevation="3dp">
+
+        <ImageView
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:layout_gravity="center"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:tint="@android:color/white" />
+
+    </FrameLayout>
 
 </FrameLayout>
