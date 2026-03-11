@@ -45,9 +45,6 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
         // Display user name (will be replaced later with Firestore name)
         tvProfileName.text = currentUser?.displayName ?: "PawFinder User"
-        btnLogout = view.findViewById(R.id.btnLogout)
-
-        setupClickListeners()
     }
 
     private fun setupClickListeners() {
