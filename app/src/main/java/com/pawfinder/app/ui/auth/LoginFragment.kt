@@ -52,6 +52,14 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         }
     }
 
+    private fun redirectIfUserAlreadyLoggedIn() {
+        val currentUser = auth.currentUser
+
+        if (currentUser != null) {
+            findNavController().navigate(R.id.action_loginFragment_to_feedFragment)
+        }
+    }
+
     private fun handleLoginClick() {
         clearErrors()
 
