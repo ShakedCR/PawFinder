@@ -7,12 +7,15 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.pawfinder.app.R
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import com.google.firebase.auth.FirebaseAuth
+import com.pawfinder.app.R
 
 class LoginFragment : Fragment(R.layout.fragment_login) {
+
+    private lateinit var auth: FirebaseAuth
 
     private lateinit var tilEmail: TextInputLayout
     private lateinit var tilPassword: TextInputLayout
@@ -23,6 +26,8 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        auth = FirebaseAuth.getInstance()
 
         initViews(view)
         setupClickListeners()
@@ -57,7 +62,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             return
         }
 
-        Toast.makeText(requireContext(), "Login validation passed", Toast.LENGTH_SHORT).show()
+        loginUser(email, password)
     }
 
     private fun validateLoginInput(email: String, password: String): Boolean {
@@ -80,6 +85,26 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         }
 
         return isValid
+    }
+
+    private fun loginUser(email: String, password: String) {
+        btnLogin.isEnabled = false
+
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                btnLogin.isEnabled = true
+
+                if (task.isSuccessful) {
+                    Toast.makeText(requireContext(), "Login successful", Toast.LENGTH_SHORT).show()
+                    findNavController().navigate(R.id.action_loginFragment_to_feedFragment)
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        task.exception?.localizedMessage ?: "Login failed",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
     }
 
     private fun clearErrors() {

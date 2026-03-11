@@ -7,12 +7,15 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.pawfinder.app.R
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import com.google.firebase.auth.FirebaseAuth
+import com.pawfinder.app.R
 
 class RegisterFragment : Fragment(R.layout.fragment_register) {
+
+    private lateinit var auth: FirebaseAuth
 
     private lateinit var tilFullName: TextInputLayout
     private lateinit var tilEmail: TextInputLayout
@@ -29,6 +32,8 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        auth = FirebaseAuth.getInstance()
 
         initViews(view)
         setupClickListeners()
@@ -71,7 +76,7 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
             return
         }
 
-        Toast.makeText(requireContext(), "Register validation passed", Toast.LENGTH_SHORT).show()
+        registerUser(fullName, email, password)
     }
 
     private fun validateRegisterInput(
@@ -112,6 +117,26 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
         }
 
         return isValid
+    }
+
+    private fun registerUser(fullName: String, email: String, password: String) {
+        btnRegister.isEnabled = false
+
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                btnRegister.isEnabled = true
+
+                if (task.isSuccessful) {
+                    Toast.makeText(requireContext(), "Registration successful", Toast.LENGTH_SHORT).show()
+                    findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        task.exception?.localizedMessage ?: "Registration failed",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
     }
 
     private fun clearErrors() {
