@@ -8,11 +8,13 @@ data class PostEntity(
     @PrimaryKey
     val id: String,
     val userId: String,
+    val userName: String,
+    val userImageUrl: String,
     val petName: String,
     val petType: String,
-    val description: String,
     val status: String,
+    val description: String,
     val imageUrl: String,
     val location: String,
-    val createdAt: Long
+    val timestamp: Long
 )
