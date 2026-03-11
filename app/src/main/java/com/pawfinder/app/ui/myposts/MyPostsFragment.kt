@@ -4,11 +4,12 @@ import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.pawfinder.app.R
 import com.pawfinder.app.data.local.DatabaseProvider
@@ -59,11 +60,11 @@ class MyPostsFragment : Fragment(R.layout.fragment_my_posts) {
 
     private fun setupRecyclerView() {
         postsAdapter = PostsAdapter(
-            onItemClick = { post ->
-                handlePostClick(post)
+            onEditClick = { post ->
+                handleEditPost(post)
             },
-            onItemLongClick = { post ->
-                handlePostLongClick(post)
+            onDeleteClick = { post ->
+                showDeleteConfirmationDialog(post)
             }
         )
 
@@ -90,7 +91,7 @@ class MyPostsFragment : Fragment(R.layout.fragment_my_posts) {
         postViewModel.loadPostsByUserId(currentUserId)
     }
 
-    private fun handlePostClick(post: Post) {
+    private fun handleEditPost(post: Post) {
         val bundle = Bundle().apply {
             putString("postId", post.id)
         }
@@ -101,7 +102,18 @@ class MyPostsFragment : Fragment(R.layout.fragment_my_posts) {
         )
     }
 
-    private fun handlePostLongClick(post: Post) {
+    private fun showDeleteConfirmationDialog(post: Post) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Delete Post")
+            .setMessage("Are you sure you want to delete this post?")
+            .setPositiveButton("Delete") { _, _ ->
+                deletePost(post)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun deletePost(post: Post) {
         postViewModel.deletePostById(post.id)
         loadCurrentUserPosts()
 
