@@ -8,7 +8,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.pawfinder.app.R
 import com.pawfinder.app.model.Post
 
-class PostsAdapter : RecyclerView.Adapter<PostsAdapter.PostViewHolder>() {
+class PostsAdapter(
+    private val onItemClick: ((Post) -> Unit)? = null,
+    private val onItemLongClick: ((Post) -> Unit)? = null
+) : RecyclerView.Adapter<PostsAdapter.PostViewHolder>() {
 
     private val posts = mutableListOf<Post>()
 
@@ -25,7 +28,17 @@ class PostsAdapter : RecyclerView.Adapter<PostsAdapter.PostViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
-        holder.bind(posts[position])
+        val post = posts[position]
+        holder.bind(post)
+
+        holder.itemView.setOnClickListener {
+            onItemClick?.invoke(post)
+        }
+
+        holder.itemView.setOnLongClickListener {
+            onItemLongClick?.invoke(post)
+            true
+        }
     }
 
     override fun getItemCount(): Int = posts.size
