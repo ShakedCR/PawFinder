@@ -20,6 +20,10 @@ import com.pawfinder.app.data.local.DatabaseProvider
 import com.pawfinder.app.data.repository.PostRepository
 import com.pawfinder.app.model.Post
 import java.util.UUID
+import com.pawfinder.app.data.remote.cloudinary.CloudinaryManager
+import androidx.lifecycle.lifecycleScope
+import com.pawfinder.app.data.remote.cloudinary.CloudinaryImageUploader
+import kotlinx.coroutines.launch
 
 class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
 
@@ -73,7 +77,7 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
         super.onViewCreated(view, savedInstanceState)
 
         auth = FirebaseAuth.getInstance()
-
+        CloudinaryManager.init(requireContext())
         initViewModel()
         initViews(view)
         setupRecyclerView()
@@ -168,32 +172,58 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
             return
         }
 
-        val currentUser = auth.currentUser
-        val userId = currentUser?.uid ?: "unknown_user"
-        val userName = currentUser?.displayName ?: "PawFinder User"
+        btnCreatePost.isEnabled = false
 
-        // Store all selected image URIs as one comma-separated string for now
-        val imagesAsSingleString = selectedImageUris.joinToString(",") { it.toString() }
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val uploader = CloudinaryImageUploader(requireContext())
 
-        val post = Post(
-            id = UUID.randomUUID().toString(),
-            userId = userId,
-            userName = userName,
-            userImageUrl = "",
-            petName = petName,
-            petType = petType,
-            status = status,
-            description = description,
-            imageUrl = imagesAsSingleString,
-            location = location,
-            timestamp = System.currentTimeMillis()
-        )
+                val uploadedImageUrls = mutableListOf<String>()
+                for (uri in selectedImageUris) {
+                    val uploadedUrl = uploader.uploadImage(uri)
+                    uploadedImageUrls.add(uploadedUrl)
+                }
 
-        // Save post locally
-        postViewModel.insertPost(post)
+                val currentUser = auth.currentUser
+                val userId = currentUser?.uid ?: "unknown_user"
+                val userName = currentUser?.displayName ?: "PawFinder User"
 
-        Toast.makeText(requireContext(), "Post created successfully", Toast.LENGTH_SHORT).show()
-        clearForm()
+                val imagesAsSingleString = uploadedImageUrls.joinToString(",")
+
+                val post = Post(
+                    id = UUID.randomUUID().toString(),
+                    userId = userId,
+                    userName = userName,
+                    userImageUrl = "",
+                    petName = petName,
+                    petType = petType,
+                    status = status,
+                    description = description,
+                    imageUrl = imagesAsSingleString,
+                    location = location,
+                    timestamp = System.currentTimeMillis()
+                )
+
+                postViewModel.insertPost(post)
+
+                Toast.makeText(
+                    requireContext(),
+                    "Post created successfully",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                clearForm()
+
+            } catch (e: Exception) {
+                Toast.makeText(
+                    requireContext(),
+                    e.message ?: "Failed to upload images",
+                    Toast.LENGTH_LONG
+                ).show()
+            } finally {
+                btnCreatePost.isEnabled = true
+            }
+        }
     }
 
     private fun validateInput(
