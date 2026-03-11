@@ -3,6 +3,7 @@ package com.pawfinder.app.ui.myposts
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -11,6 +12,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.pawfinder.app.R
 import com.pawfinder.app.data.local.DatabaseProvider
 import com.pawfinder.app.data.repository.PostRepository
+import com.pawfinder.app.model.Post
 import com.pawfinder.app.ui.post.PostViewModel
 import com.pawfinder.app.ui.post.PostViewModelFactory
 import com.pawfinder.app.ui.post.PostsAdapter
@@ -36,6 +38,11 @@ class MyPostsFragment : Fragment(R.layout.fragment_my_posts) {
         loadCurrentUserPosts()
     }
 
+    override fun onResume() {
+        super.onResume()
+        loadCurrentUserPosts()
+    }
+
     private fun initViewModel() {
         val database = DatabaseProvider.getDatabase(requireContext())
         val repository = PostRepository(database.postDao())
@@ -50,7 +57,15 @@ class MyPostsFragment : Fragment(R.layout.fragment_my_posts) {
     }
 
     private fun setupRecyclerView() {
-        postsAdapter = PostsAdapter()
+        postsAdapter = PostsAdapter(
+            onItemClick = { post ->
+                handlePostClick(post)
+            },
+            onItemLongClick = { post ->
+                handlePostLongClick(post)
+            }
+        )
+
         rvMyPosts.layoutManager = LinearLayoutManager(requireContext())
         rvMyPosts.adapter = postsAdapter
     }
@@ -72,5 +87,24 @@ class MyPostsFragment : Fragment(R.layout.fragment_my_posts) {
     private fun loadCurrentUserPosts() {
         val currentUserId = auth.currentUser?.uid ?: return
         postViewModel.loadPostsByUserId(currentUserId)
+    }
+
+    private fun handlePostClick(post: Post) {
+        Toast.makeText(
+            requireContext(),
+            "Selected post: ${post.petName}",
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+
+    private fun handlePostLongClick(post: Post) {
+        postViewModel.deletePostById(post.id)
+        loadCurrentUserPosts()
+
+        Toast.makeText(
+            requireContext(),
+            "Post deleted successfully",
+            Toast.LENGTH_SHORT
+        ).show()
     }
 }
