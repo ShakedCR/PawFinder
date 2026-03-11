@@ -37,6 +37,9 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
         tvProfileEmail.text = currentUser?.email ?: "No email available"
         tvProfileName.text = currentUser?.displayName ?: "PawFinder User"
+        btnLogout = view.findViewById(R.id.btnLogout)
+
+        setupClickListeners()
     }
 
     private fun setupClickListeners() {

@@ -33,6 +33,11 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         setupClickListeners()
     }
 
+    override fun onStart() {
+        super.onStart()
+        redirectIfUserAlreadyLoggedIn()
+    }
+
     private fun initViews(view: View) {
         tilEmail = view.findViewById(R.id.tilLoginEmail)
         tilPassword = view.findViewById(R.id.tilLoginPassword)
