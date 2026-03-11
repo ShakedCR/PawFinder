@@ -9,10 +9,10 @@ import com.pawfinder.app.data.local.entities.PostEntity
 @Dao
 interface PostDao {
 
-    @Query("SELECT * FROM posts ORDER BY createdAt DESC")
+    @Query("SELECT * FROM posts ORDER BY timestamp DESC")
     suspend fun getAllPosts(): List<PostEntity>
 
-    @Query("SELECT * FROM posts WHERE userId = :userId ORDER BY createdAt DESC")
+    @Query("SELECT * FROM posts WHERE userId = :userId ORDER BY timestamp DESC")
     suspend fun getPostsByUserId(userId: String): List<PostEntity>
 
     @Query("SELECT * FROM posts WHERE id = :postId LIMIT 1")
