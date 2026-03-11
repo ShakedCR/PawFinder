@@ -27,7 +27,6 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
     private lateinit var auth: FirebaseAuth
 
     private lateinit var rvSelectedImages: RecyclerView
-    private lateinit var btnSelectImages: MaterialButton
     private lateinit var tvImageError: TextView
 
     private lateinit var tilPetName: TextInputLayout
@@ -51,10 +50,22 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
         ActivityResultContracts.PickMultipleVisualMedia(5)
     ) { uris ->
         if (uris.isNotEmpty()) {
-            selectedImageUris.clear()
-            selectedImageUris.addAll(uris)
+            val availableSlots = 5 - selectedImageUris.size
+            val newUris = uris
+                .filter { it !in selectedImageUris }
+                .take(availableSlots)
+
+            selectedImageUris.addAll(newUris)
             tvImageError.visibility = View.GONE
             selectedImagesAdapter.submitList(selectedImageUris.toList())
+
+            if (uris.size > availableSlots) {
+                Toast.makeText(
+                    requireContext(),
+                    "You can select up to 5 images only",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
     }
 
@@ -79,7 +90,6 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
 
     private fun initViews(view: View) {
         rvSelectedImages = view.findViewById(R.id.rvSelectedImages)
-        btnSelectImages = view.findViewById(R.id.btnSelectImages)
         tvImageError = view.findViewById(R.id.tvImageError)
 
         tilPetName = view.findViewById(R.id.tilPetName)
@@ -98,13 +108,42 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
     }
 
     private fun setupRecyclerView() {
-        selectedImagesAdapter = SelectedImagesAdapter { uri ->
-            removeSelectedImage(uri)
-        }
+        selectedImagesAdapter = SelectedImagesAdapter(
+            maxImages = 5,
+            onRemoveClick = { uri ->
+                removeSelectedImage(uri)
+            },
+            onAddClick = {
+                openImagePicker()
+            }
+        )
 
         rvSelectedImages.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         rvSelectedImages.adapter = selectedImagesAdapter
+        selectedImagesAdapter.submitList(selectedImageUris.toList())
+    }
+
+    private fun setupClickListeners() {
+        btnCreatePost.setOnClickListener {
+            handleCreatePost()
+        }
+    }
+
+    private fun openImagePicker() {
+        if (selectedImageUris.size >= 5) {
+            Toast.makeText(
+                requireContext(),
+                "Maximum 5 images allowed",
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
+
+        // Open gallery and allow selecting images only
+        pickMultipleImagesLauncher.launch(
+            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+        )
     }
 
     private fun removeSelectedImage(uri: Uri) {
@@ -114,23 +153,6 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
         if (selectedImageUris.isEmpty()) {
             tvImageError.visibility = View.VISIBLE
         }
-    }
-
-    private fun setupClickListeners() {
-        btnSelectImages.setOnClickListener {
-            openImagePicker()
-        }
-
-        btnCreatePost.setOnClickListener {
-            handleCreatePost()
-        }
-    }
-
-    private fun openImagePicker() {
-        // Allow the user to select up to 5 images from the device gallery
-        pickMultipleImagesLauncher.launch(
-            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-        )
     }
 
     private fun handleCreatePost() {
@@ -150,6 +172,7 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
         val userId = currentUser?.uid ?: "unknown_user"
         val userName = currentUser?.displayName ?: "PawFinder User"
 
+        // Store all selected image URIs as one comma-separated string for now
         val imagesAsSingleString = selectedImageUris.joinToString(",") { it.toString() }
 
         val post = Post(
@@ -166,6 +189,7 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
             timestamp = System.currentTimeMillis()
         )
 
+        // Save post locally
         postViewModel.insertPost(post)
 
         Toast.makeText(requireContext(), "Post created successfully", Toast.LENGTH_SHORT).show()
