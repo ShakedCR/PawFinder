@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.pawfinder.app.R
 import com.pawfinder.app.data.local.DatabaseProvider
@@ -90,11 +91,14 @@ class MyPostsFragment : Fragment(R.layout.fragment_my_posts) {
     }
 
     private fun handlePostClick(post: Post) {
-        Toast.makeText(
-            requireContext(),
-            "Selected post: ${post.petName}",
-            Toast.LENGTH_SHORT
-        ).show()
+        val bundle = Bundle().apply {
+            putString("postId", post.id)
+        }
+
+        findNavController().navigate(
+            R.id.action_myPostsFragment_to_editPostFragment,
+            bundle
+        )
     }
 
     private fun handlePostLongClick(post: Post) {

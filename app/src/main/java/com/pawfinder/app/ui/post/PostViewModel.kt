@@ -52,6 +52,13 @@ class PostViewModel(
         }
     }
 
+    fun updatePost(post: Post) {
+        viewModelScope.launch {
+            postRepository.insertPost(post)
+            _selectedPost.value = post
+        }
+    }
+
     fun deletePostById(postId: String) {
         viewModelScope.launch {
             postRepository.deletePostById(postId)
