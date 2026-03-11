@@ -107,18 +107,11 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvSelectedImages"
-            android:layout_width="336dp"
-            android:layout_height="91dp"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
             android:layout_marginTop="12dp"
             android:clipToPadding="false"
             android:paddingEnd="8dp" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnSelectImages"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="Select Images" />
 
         <TextView
             android:id="@+id/tvImageError"
