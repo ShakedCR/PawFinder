@@ -1,51 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    tools:context=".ui.auth.LoginFragment">
+    android:background="@drawable/login_background"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:padding="24dp"
-        android:gravity="center_horizontal">
+        android:padding="@dimen/spacing_large">
 
         <ImageView
             android:id="@+id/ivLoginLogo"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:layout_marginTop="32dp"
+            android:layout_width="350dp"
+            android:layout_height="350dp"
+            android:layout_marginTop="48dp"
             android:contentDescription="@string/app_name"
-            android:src="@mipmap/ic_launcher_round" />
+            android:src="@drawable/pawfinder_logo" />
 
         <TextView
             android:id="@+id/tvLoginTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="Welcome Back"
-            android:textSize="28sp"
+            android:layout_marginTop="@dimen/spacing_large"
+            android:fontFamily="sans-serif-medium"
+            android:text="Welcome Back 🐾"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/text_headline"
             android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/tvLoginSubtitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Login to continue using PawFinder"
-            android:textSize="16sp" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilLoginEmail"
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:hint="Email">
+            android:layout_marginTop="@dimen/spacing_xlarge"
+            android:hint="Email"
+            app:boxCornerRadiusBottomEnd="@dimen/card_radius"
+            app:boxCornerRadiusBottomStart="@dimen/card_radius"
+            app:boxCornerRadiusTopEnd="@dimen/card_radius"
+            app:boxCornerRadiusTopStart="@dimen/card_radius"
+            app:startIconDrawable="@android:drawable/ic_dialog_email">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etLoginEmail"
@@ -60,9 +58,14 @@
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="@dimen/spacing_medium"
             android:hint="Password"
-            app:endIconMode="password_toggle">
+            app:boxCornerRadiusBottomEnd="@dimen/card_radius"
+            app:boxCornerRadiusBottomStart="@dimen/card_radius"
+            app:boxCornerRadiusTopEnd="@dimen/card_radius"
+            app:boxCornerRadiusTopStart="@dimen/card_radius"
+            app:endIconMode="password_toggle"
+            app:startIconDrawable="@android:drawable/ic_lock_idle_lock">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etLoginPassword"
@@ -75,17 +78,20 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnLogin"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="Login" />
+            android:layout_height="@dimen/button_height"
+            android:layout_marginTop="@dimen/spacing_large"
+            android:text="Login"
+            android:textSize="@dimen/text_subtitle"
+            app:cornerRadius="@dimen/card_radius" />
 
         <TextView
             android:id="@+id/tvGoToRegister"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="@dimen/spacing_large"
             android:text="Don't have an account? Register"
-            android:textSize="14sp"
+            android:textColor="@color/primary"
+            android:textSize="@dimen/text_subtitle"
             android:textStyle="bold" />
 
     </LinearLayout>
