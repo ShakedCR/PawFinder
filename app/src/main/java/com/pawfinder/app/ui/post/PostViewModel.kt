@@ -52,10 +52,13 @@ class PostViewModel(
         }
     }
 
-    fun updatePost(post: Post) {
+    fun updatePost(post: Post, onComplete: () -> Unit = {}) {
         viewModelScope.launch {
+            _isLoading.value = true
             postRepository.insertPost(post)
             _selectedPost.value = post
+            _isLoading.value = false
+            onComplete()
         }
     }
 
