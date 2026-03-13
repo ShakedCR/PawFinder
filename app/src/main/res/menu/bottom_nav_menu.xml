@@ -3,18 +3,22 @@
 
     <item
         android:id="@+id/feedFragment"
+        android:icon="@drawable/ic_home"
         android:title="Home" />
 
     <item
         android:id="@+id/myPostsFragment"
+        android:icon="@drawable/ic_my_posts"
         android:title="My Posts" />
 
     <item
         android:id="@+id/createPostFragment"
+        android:icon="@drawable/ic_add"
         android:title="Add" />
 
     <item
         android:id="@+id/profileFragment"
+        android:icon="@drawable/ic_profile"
         android:title="Profile" />
 
 </menu>
