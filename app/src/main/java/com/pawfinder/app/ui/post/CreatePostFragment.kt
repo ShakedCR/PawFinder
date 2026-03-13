@@ -140,7 +140,6 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
             return
         }
 
-        // Open gallery and allow selecting images only
         pickMultipleImagesLauncher.launch(
             PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
         )
@@ -172,7 +171,6 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
         val userId = currentUser?.uid ?: "unknown_user"
         val userName = currentUser?.displayName ?: "PawFinder User"
 
-        // Store all selected image URIs as one comma-separated string for now
         val imagesAsSingleString = selectedImageUris.joinToString(",") { it.toString() }
 
         val post = Post(
@@ -189,7 +187,6 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
             timestamp = System.currentTimeMillis()
         )
 
-        // Save post locally
         postViewModel.insertPost(post)
 
         Toast.makeText(requireContext(), "Post created successfully", Toast.LENGTH_SHORT).show()
@@ -206,8 +203,7 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
         var isValid = true
 
         if (selectedImageUris.isEmpty()) {
-            tvImageError.visibility = View.VISIBLE
-            isValid = false
+            tvImageError.visibility = View.GONE
         }
 
         if (petName.isBlank()) {
