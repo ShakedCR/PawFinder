@@ -1,5 +1,4 @@
 package com.pawfinder.app.ui.auth
-
 import android.os.Bundle
 import android.util.Patterns
 import android.view.View
@@ -127,8 +126,27 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
                 btnRegister.isEnabled = true
 
                 if (task.isSuccessful) {
-                    Toast.makeText(requireContext(), "Registration successful", Toast.LENGTH_SHORT).show()
-                    findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
+                    val firebaseUser = auth.currentUser
+                    val userId = firebaseUser?.uid ?: return@addOnCompleteListener
+
+                    val userMap = hashMapOf(
+                        "id" to userId,
+                        "name" to fullName,
+                        "email" to email,
+                        "profileImageUrl" to ""
+                    )
+
+                    com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                        .collection("users")
+                        .document(userId)
+                        .set(userMap)
+                        .addOnSuccessListener {
+                            Toast.makeText(requireContext(), "Registration successful", Toast.LENGTH_SHORT).show()
+                            findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
+                        }
+                        .addOnFailureListener {
+                            Toast.makeText(requireContext(), "Failed to save user data", Toast.LENGTH_LONG).show()
+                        }
                 } else {
                     Toast.makeText(
                         requireContext(),

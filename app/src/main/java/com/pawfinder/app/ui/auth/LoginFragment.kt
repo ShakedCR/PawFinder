@@ -1,5 +1,4 @@
 package com.pawfinder.app.ui.auth
-
 import android.os.Bundle
 import android.util.Patterns
 import android.view.View
