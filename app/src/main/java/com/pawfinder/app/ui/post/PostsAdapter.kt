@@ -4,9 +4,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.pawfinder.app.R
 import com.pawfinder.app.model.Post
 
@@ -71,6 +73,7 @@ class PostsAdapter(
         private val tvStatus: TextView = itemView.findViewById(R.id.tvStatus)
         private val tvLocation: TextView = itemView.findViewById(R.id.tvLocation)
         private val tvDescription: TextView = itemView.findViewById(R.id.tvDescription)
+        private val ivPostImage: ImageView = itemView.findViewById(R.id.ivPostImage)
         val btnPostActions: ImageButton = itemView.findViewById(R.id.btnPostActions)
 
         fun bind(post: Post) {
@@ -79,6 +82,18 @@ class PostsAdapter(
             tvStatus.text = "Status: ${post.status}"
             tvLocation.text = "Location: ${post.location}"
             tvDescription.text = post.description
+
+            if (post.imageUrl.isNotBlank()) {
+                ivPostImage.visibility = View.VISIBLE
+
+                Glide.with(itemView.context)
+                    .load(post.imageUrl)
+                    .placeholder(R.drawable.ic_launcher_background)
+                    .error(R.drawable.ic_launcher_background)
+                    .into(ivPostImage)
+            } else {
+                ivPostImage.visibility = View.GONE
+            }
         }
     }
 }
