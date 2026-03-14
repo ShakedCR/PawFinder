@@ -3,140 +3,204 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background"
     android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="24dp">
+        android:padding="@dimen/spacing_large">
 
         <TextView
             android:id="@+id/tvCreatePostTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Create New Post"
-            android:textSize="24sp"
+            android:fontFamily="sans-serif-medium"
+            android:text="Create New Post 🐾"
+            android:textColor="@color/text_primary"
+            android:textSize="@dimen/text_headline"
             android:textStyle="bold" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilPetName"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:hint="Pet Name">
+            android:layout_marginTop="@dimen/spacing_large"
+            app:cardCornerRadius="@dimen/card_radius"
+            app:cardElevation="4dp">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etPetName"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPersonName" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:orientation="vertical"
+                android:padding="@dimen/spacing_medium">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilPetType"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilPetName"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Pet Name"
+                    app:boxCornerRadiusBottomEnd="@dimen/card_radius"
+                    app:boxCornerRadiusBottomStart="@dimen/card_radius"
+                    app:boxCornerRadiusTopEnd="@dimen/card_radius"
+                    app:boxCornerRadiusTopStart="@dimen/card_radius"
+                    app:startIconDrawable="@drawable/ic_profile">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etPetName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilPetType"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_medium"
+                    android:hint="Pet Type (Dog / Cat / Other)"
+                    app:boxCornerRadiusBottomEnd="@dimen/card_radius"
+                    app:boxCornerRadiusBottomStart="@dimen/card_radius"
+                    app:boxCornerRadiusTopEnd="@dimen/card_radius"
+                    app:boxCornerRadiusTopStart="@dimen/card_radius"
+                    app:startIconDrawable="@drawable/ic_add">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etPetType"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilStatus"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_medium"
+                    android:hint="Status (Lost / Found)"
+                    app:boxCornerRadiusBottomEnd="@dimen/card_radius"
+                    app:boxCornerRadiusBottomStart="@dimen/card_radius"
+                    app:boxCornerRadiusTopEnd="@dimen/card_radius"
+                    app:boxCornerRadiusTopStart="@dimen/card_radius"
+                    app:startIconDrawable="@android:drawable/ic_menu_search">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etStatus"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilDescription"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_medium"
+                    android:hint="Description"
+                    app:boxCornerRadiusBottomEnd="@dimen/card_radius"
+                    app:boxCornerRadiusBottomStart="@dimen/card_radius"
+                    app:boxCornerRadiusTopEnd="@dimen/card_radius"
+                    app:boxCornerRadiusTopStart="@dimen/card_radius">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etDescription"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="top"
+                        android:inputType="textMultiLine"
+                        android:minLines="4" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilLocation"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_medium"
+                    android:hint="Location"
+                    app:boxCornerRadiusBottomEnd="@dimen/card_radius"
+                    app:boxCornerRadiusBottomStart="@dimen/card_radius"
+                    app:boxCornerRadiusTopEnd="@dimen/card_radius"
+                    app:boxCornerRadiusTopStart="@dimen/card_radius"
+                    app:startIconDrawable="@drawable/ic_home">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etLocation"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPostalAddress" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:hint="Pet Type">
+            android:layout_marginTop="@dimen/spacing_large"
+            app:cardCornerRadius="@dimen/card_radius"
+            app:cardElevation="4dp">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etPetType"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="text" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:orientation="vertical"
+                android:padding="@dimen/spacing_medium">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilStatus"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:hint="Status (Lost / Found)">
+                <TextView
+                    android:id="@+id/tvSelectedImagesLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="Photos"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/text_subtitle"
+                    android:textStyle="bold" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etStatus"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="text" />
-        </com.google.android.material.textfield.TextInputLayout>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvSelectedImages"
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:layout_marginTop="@dimen/spacing_small"
+                    android:clipToPadding="false"
+                    android:paddingEnd="@dimen/spacing_small" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilDescription"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:hint="Description">
+                <TextView
+                    android:id="@+id/tvImageError"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_tiny"
+                    android:text="Please select at least one image"
+                    android:textColor="@color/lost_red"
+                    android:textSize="@dimen/text_small"
+                    android:visibility="gone" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etDescription"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="top"
-                android:inputType="textMultiLine"
-                android:minLines="4" />
-        </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilLocation"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:hint="Location">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etLocation"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPostalAddress" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <TextView
-            android:id="@+id/tvSelectedImagesLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="Selected Images"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvSelectedImages"
-            android:layout_width="match_parent"
-            android:layout_height="120dp"
-            android:layout_marginTop="12dp"
-            android:clipToPadding="false"
-            android:paddingEnd="8dp" />
-
-        <TextView
-            android:id="@+id/tvImageError"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Please select at least one image"
-            android:textColor="@android:color/holo_red_dark"
-            android:visibility="gone" />
+        </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.progressindicator.CircularProgressIndicator
             android:id="@+id/progressIndicator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="@dimen/spacing_medium"
             android:visibility="gone"
             app:indicatorColor="@color/primary" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCreatePost"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="Create Post" />
+            android:layout_height="@dimen/button_height"
+            android:layout_marginTop="@dimen/spacing_large"
+            android:text="Create Post"
+            android:textSize="@dimen/text_subtitle"
+            app:cornerRadius="@dimen/card_radius" />
 
     </LinearLayout>
 
