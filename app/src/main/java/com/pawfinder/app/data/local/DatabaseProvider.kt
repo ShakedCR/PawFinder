@@ -15,7 +15,7 @@ object DatabaseProvider {
                 AppDatabase::class.java,
                 "pawfinder_database"
             )
-                .fallbackToDestructiveMigration()
+                .addMigrations(AppDatabase.MIGRATION_1_2)
                 .build()
 
             INSTANCE = instance

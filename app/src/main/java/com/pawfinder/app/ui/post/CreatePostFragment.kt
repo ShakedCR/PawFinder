@@ -159,19 +159,20 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
             .get()
             .addOnSuccessListener { doc ->
                 val userName = doc.getString("name") ?: "PawFinder User"
+                val userEmail = doc.getString("email") ?: ""
                 val userImageUrl = doc.getString("profileImageUrl") ?: ""
 
                 if (selectedImageUris.isEmpty()) {
-                    savePost(petName, petType, status, description, location, "", userId, userName, userImageUrl)
+                    savePost(petName, petType, status, description, location, "", userId, userName, userEmail, userImageUrl)
                 } else {
-                    uploadImagesAndSavePost(petName, petType, status, description, location, userId, userName, userImageUrl)
+                    uploadImagesAndSavePost(petName, petType, status, description, location, userId, userName, userEmail, userImageUrl)
                 }
             }
             .addOnFailureListener {
                 if (selectedImageUris.isEmpty()) {
-                    savePost(petName, petType, status, description, location, "", userId, "PawFinder User", "")
+                    savePost(petName, petType, status, description, location, "", userId, "PawFinder User", "", "")
                 } else {
-                    uploadImagesAndSavePost(petName, petType, status, description, location, userId, "PawFinder User", "")
+                    uploadImagesAndSavePost(petName, petType, status, description, location, userId, "PawFinder User", "", "")
                 }
             }
     }
@@ -179,7 +180,7 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
     private fun uploadImagesAndSavePost(
         petName: String, petType: String, status: String,
         description: String, location: String,
-        userId: String, userName: String, userImageUrl: String
+        userId: String, userName: String, userEmail: String, userImageUrl: String
     ) {
         uploadedImageUrls.clear()
         var uploadedCount = 0
@@ -193,7 +194,7 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
                     uploadedCount++
                     if (uploadedCount == selectedImageUris.size) {
                         val imageUrlString = uploadedImageUrls.joinToString(",")
-                        savePost(petName, petType, status, description, location, imageUrlString, userId, userName, userImageUrl)
+                        savePost(petName, petType, status, description, location, imageUrlString, userId, userName, userEmail, userImageUrl)
                     }
                 },
                 onError = { error ->
@@ -207,12 +208,13 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
     private fun savePost(
         petName: String, petType: String, status: String,
         description: String, location: String, imageUrl: String,
-        userId: String, userName: String, userImageUrl: String
+        userId: String, userName: String, userEmail: String, userImageUrl: String
     ) {
         val post = Post(
             id = UUID.randomUUID().toString(),
             userId = userId,
             userName = userName,
+            userEmail = userEmail,
             userImageUrl = userImageUrl,
             petName = petName,
             petType = petType,

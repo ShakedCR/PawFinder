@@ -9,6 +9,7 @@ data class PostEntity(
     val id: String,
     val userId: String,
     val userName: String,
+    val userEmail: String = "",
     val userImageUrl: String,
     val petName: String,
     val petType: String,

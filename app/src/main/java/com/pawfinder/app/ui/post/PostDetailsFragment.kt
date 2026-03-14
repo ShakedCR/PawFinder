@@ -1,5 +1,7 @@
 package com.pawfinder.app.ui.post
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
@@ -11,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.chip.Chip
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.pawfinder.app.R
 import com.pawfinder.app.data.local.DatabaseProvider
 import com.pawfinder.app.data.repository.PostRepository
@@ -31,6 +34,7 @@ class PostDetailsFragment : Fragment(R.layout.fragment_post_details) {
     private lateinit var tvBreedInfo: TextView
 
     private var postId: String? = null
+    private var posterEmail: String = ""
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -59,6 +63,27 @@ class PostDetailsFragment : Fragment(R.layout.fragment_post_details) {
         tvDetailDescription = view.findViewById(R.id.tvDetailDescription)
         cardBreedInfo = view.findViewById(R.id.cardBreedInfo)
         tvBreedInfo = view.findViewById(R.id.tvBreedInfo)
+
+        tvDetailUserName.setOnClickListener {
+            if (posterEmail.isNotBlank()) {
+                showContactDialog()
+            }
+        }
+    }
+
+    private fun showContactDialog() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Contact Owner")
+            .setMessage("Send an email to: $posterEmail")
+            .setPositiveButton("Send Email") { _, _ ->
+                val intent = Intent(Intent.ACTION_SENDTO).apply {
+                    data = Uri.parse("mailto:$posterEmail")
+                    putExtra(Intent.EXTRA_SUBJECT, "Regarding your lost pet on PawFinder")
+                }
+                startActivity(intent)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
     private fun setupDots(count: Int) {
@@ -97,11 +122,21 @@ class PostDetailsFragment : Fragment(R.layout.fragment_post_details) {
     private fun observeViewModel() {
         postViewModel.selectedPost.observe(viewLifecycleOwner) { post ->
             post?.let {
+                posterEmail = it.userEmail
+
                 tvDetailPetName.text = it.petName
                 tvDetailPetType.text = "Type: ${it.petType}"
                 tvDetailLocation.text = it.location
-                tvDetailUserName.text = "Posted by: ${it.userName}"
                 tvDetailDescription.text = it.description
+
+                if (it.userEmail.isNotBlank()) {
+                    tvDetailUserName.text = "📧 Posted by: ${it.userName}"
+                    tvDetailUserName.setTextColor(
+                        ContextCompat.getColor(requireContext(), R.color.primary)
+                    )
+                } else {
+                    tvDetailUserName.text = "Posted by: ${it.userName}"
+                }
 
                 chipDetailStatus.text = it.status
                 if (it.status.lowercase() == "lost") {

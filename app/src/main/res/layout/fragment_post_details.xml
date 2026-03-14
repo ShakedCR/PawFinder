@@ -143,7 +143,12 @@
                             android:layout_marginStart="@dimen/spacing_small"
                             android:text="Posted by"
                             android:textColor="@color/text_primary"
-                            android:textSize="@dimen/text_body" />
+                            android:textSize="@dimen/text_body"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:minHeight="48dp"
+                            android:gravity="center_vertical"
+                            android:background="?attr/selectableItemBackground" />
 
                     </LinearLayout>
 
