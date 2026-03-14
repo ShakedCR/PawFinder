@@ -9,6 +9,7 @@ import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.google.android.material.chip.Chip
 import com.pawfinder.app.R
 import com.pawfinder.app.model.Post
 
@@ -34,7 +35,6 @@ class PostsAdapter(
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         val post = posts[position]
         holder.bind(post)
-
         holder.btnPostActions.setOnClickListener { anchorView ->
             showPopupMenu(anchorView, post)
         }
@@ -49,20 +49,11 @@ class PostsAdapter(
 
         popupMenu.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
-                1 -> {
-                    onEditClick(post)
-                    true
-                }
-
-                2 -> {
-                    onDeleteClick(post)
-                    true
-                }
-
+                1 -> { onEditClick(post); true }
+                2 -> { onDeleteClick(post); true }
                 else -> false
             }
         }
-
         popupMenu.show()
     }
 
@@ -70,7 +61,7 @@ class PostsAdapter(
 
         private val tvPetName: TextView = itemView.findViewById(R.id.tvPetName)
         private val tvPetType: TextView = itemView.findViewById(R.id.tvPetType)
-        private val tvStatus: TextView = itemView.findViewById(R.id.tvStatus)
+        private val chipStatus: Chip = itemView.findViewById(R.id.chipStatus)
         private val tvLocation: TextView = itemView.findViewById(R.id.tvLocation)
         private val tvDescription: TextView = itemView.findViewById(R.id.tvDescription)
         private val ivPostImage: ImageView = itemView.findViewById(R.id.ivPostImage)
@@ -79,15 +70,20 @@ class PostsAdapter(
         fun bind(post: Post) {
             tvPetName.text = post.petName
             tvPetType.text = "Type: ${post.petType}"
-            tvStatus.text = "Status: ${post.status}"
             tvLocation.text = "Location: ${post.location}"
             tvDescription.text = post.description
 
+            chipStatus.text = post.status
+            if (post.status.lowercase() == "lost") {
+                chipStatus.setChipBackgroundColorResource(R.color.lost_red)
+            } else {
+                chipStatus.setChipBackgroundColorResource(R.color.found_green)
+            }
+
             if (post.imageUrl.isNotBlank()) {
                 ivPostImage.visibility = View.VISIBLE
-
                 Glide.with(itemView.context)
-                    .load(post.imageUrl)
+                    .load(post.imageUrl.split(",").first())
                     .placeholder(R.drawable.ic_launcher_background)
                     .error(R.drawable.ic_launcher_background)
                     .into(ivPostImage)
