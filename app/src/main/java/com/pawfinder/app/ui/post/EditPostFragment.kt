@@ -143,7 +143,7 @@ class EditPostFragment : Fragment(R.layout.fragment_edit_post) {
         if (post.imageUrl.isNotBlank()) {
             ivEditPostImage.visibility = View.VISIBLE
             Glide.with(this)
-                .load(post.imageUrl)
+                .load(post.imageUrl.split(",").first())
                 .into(ivEditPostImage)
         } else {
             ivEditPostImage.visibility = View.GONE
