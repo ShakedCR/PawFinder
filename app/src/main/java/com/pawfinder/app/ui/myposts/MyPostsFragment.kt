@@ -2,7 +2,6 @@ package com.pawfinder.app.ui.myposts
 
 import android.os.Bundle
 import android.view.View
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
@@ -30,9 +29,7 @@ class MyPostsFragment : Fragment(R.layout.fragment_my_posts) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         auth = FirebaseAuth.getInstance()
-
         initViewModel()
         initViews(view)
         setupRecyclerView()
@@ -49,7 +46,6 @@ class MyPostsFragment : Fragment(R.layout.fragment_my_posts) {
         val database = DatabaseProvider.getDatabase(requireContext())
         val repository = PostRepository(database.postDao())
         val factory = PostViewModelFactory(repository)
-
         postViewModel = ViewModelProvider(this, factory)[PostViewModel::class.java]
     }
 
@@ -60,14 +56,18 @@ class MyPostsFragment : Fragment(R.layout.fragment_my_posts) {
 
     private fun setupRecyclerView() {
         postsAdapter = PostsAdapter(
-            onEditClick = { post ->
-                handleEditPost(post)
-            },
-            onDeleteClick = { post ->
-                showDeleteConfirmationDialog(post)
+            onEditClick = { post -> handleEditPost(post) },
+            onDeleteClick = { post -> showDeleteConfirmationDialog(post) },
+            onPostClick = { post ->
+                val bundle = Bundle().apply {
+                    putString("postId", post.id)
+                }
+                findNavController().navigate(
+                    R.id.action_myPostsFragment_to_postDetailsFragment,
+                    bundle
+                )
             }
         )
-
         rvMyPosts.layoutManager = LinearLayoutManager(requireContext())
         rvMyPosts.adapter = postsAdapter
     }
@@ -75,7 +75,6 @@ class MyPostsFragment : Fragment(R.layout.fragment_my_posts) {
     private fun observeViewModel() {
         postViewModel.posts.observe(viewLifecycleOwner) { posts ->
             postsAdapter.submitList(posts)
-
             if (posts.isNullOrEmpty()) {
                 tvEmptyState.visibility = View.VISIBLE
                 rvMyPosts.visibility = View.GONE
@@ -95,7 +94,6 @@ class MyPostsFragment : Fragment(R.layout.fragment_my_posts) {
         val bundle = Bundle().apply {
             putString("postId", post.id)
         }
-
         findNavController().navigate(
             R.id.action_myPostsFragment_to_editPostFragment,
             bundle
@@ -106,9 +104,7 @@ class MyPostsFragment : Fragment(R.layout.fragment_my_posts) {
         AlertDialog.Builder(requireContext())
             .setTitle("Delete Post")
             .setMessage("Are you sure you want to delete this post?")
-            .setPositiveButton("Delete") { _, _ ->
-                deletePost(post)
-            }
+            .setPositiveButton("Delete") { _, _ -> deletePost(post) }
             .setNegativeButton("Cancel", null)
             .show()
     }
@@ -116,11 +112,6 @@ class MyPostsFragment : Fragment(R.layout.fragment_my_posts) {
     private fun deletePost(post: Post) {
         postViewModel.deletePostById(post.id)
         loadCurrentUserPosts()
-
-        Toast.makeText(
-            requireContext(),
-            "Post deleted successfully",
-            Toast.LENGTH_SHORT
-        ).show()
+        Toast.makeText(requireContext(), "Post deleted successfully", Toast.LENGTH_SHORT).show()
     }
 }

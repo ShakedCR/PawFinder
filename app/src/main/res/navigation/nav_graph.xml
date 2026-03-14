@@ -31,7 +31,11 @@
     <fragment
         android:id="@+id/feedFragment"
         android:name="com.pawfinder.app.ui.feed.FeedFragment"
-        android:label="Home" />
+        android:label="Home">
+        <action
+            android:id="@+id/action_feedFragment_to_postDetailsFragment"
+            app:destination="@id/postDetailsFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/postDetailsFragment"
@@ -50,6 +54,9 @@
         <action
             android:id="@+id/action_myPostsFragment_to_editPostFragment"
             app:destination="@id/editPostFragment" />
+        <action
+            android:id="@+id/action_myPostsFragment_to_postDetailsFragment"
+            app:destination="@id/postDetailsFragment" />
     </fragment>
 
     <fragment

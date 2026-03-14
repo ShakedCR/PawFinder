@@ -6,6 +6,7 @@ import android.widget.TextView
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.chip.ChipGroup
@@ -39,7 +40,6 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         initViewModel()
         initViews(view)
         setupRecyclerView()
@@ -68,6 +68,13 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
         feedAdapter = PostsAdapter(
             showActions = false,
             onPostClick = { post ->
+                val bundle = Bundle().apply {
+                    putString("postId", post.id)
+                }
+                findNavController().navigate(
+                    R.id.action_feedFragment_to_postDetailsFragment,
+                    bundle
+                )
             }
         )
 
@@ -78,11 +85,9 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
         rvFeed.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-
                 val visibleItemCount = layoutManager.childCount
                 val totalItemCount = layoutManager.itemCount
                 val firstVisibleItem = layoutManager.findFirstVisibleItemPosition()
-
                 if (!isLoading && (visibleItemCount + firstVisibleItem) >= totalItemCount - 2) {
                     loadMorePosts()
                 }
@@ -97,7 +102,6 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
                 applyFilters()
                 return true
             }
-
             override fun onQueryTextChange(newText: String?): Boolean {
                 currentQuery = newText?.trim() ?: ""
                 applyFilters()
@@ -162,9 +166,7 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
         }
 
         val paginated = filtered.take((currentPage + 1) * pageSize)
-
         feedAdapter.submitList(paginated)
-
         tvEmptyState.visibility = if (paginated.isEmpty()) View.VISIBLE else View.GONE
         rvFeed.visibility = if (paginated.isEmpty()) View.GONE else View.VISIBLE
     }
