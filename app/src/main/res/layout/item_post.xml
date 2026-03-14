@@ -132,7 +132,7 @@
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="Post actions"
                     android:padding="@dimen/spacing_small"
-                    android:src="@android:drawable/ic_menu_more" />
+                    android:src="@drawable/ic_more_vert" />
 
             </LinearLayout>
 

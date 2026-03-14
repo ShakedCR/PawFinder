@@ -26,7 +26,7 @@ class MyPostsFragment : Fragment(R.layout.fragment_my_posts) {
     private lateinit var postsAdapter: PostsAdapter
 
     private lateinit var rvMyPosts: RecyclerView
-    private lateinit var tvEmptyState: TextView
+    private lateinit var tvEmptyState: View
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

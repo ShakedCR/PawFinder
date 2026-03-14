@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
-import android.widget.PopupMenu
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -43,18 +43,15 @@ class PostsAdapter(
     override fun getItemCount(): Int = posts.size
 
     private fun showPopupMenu(anchorView: View, post: Post) {
-        val popupMenu = PopupMenu(anchorView.context, anchorView)
-        popupMenu.menu.add(0, 1, 0, "Edit Post")
-        popupMenu.menu.add(0, 2, 1, "Delete Post")
-
-        popupMenu.setOnMenuItemClickListener { menuItem ->
-            when (menuItem.itemId) {
-                1 -> { onEditClick(post); true }
-                2 -> { onDeleteClick(post); true }
-                else -> false
+        MaterialAlertDialogBuilder(anchorView.context)
+            .setTitle(post.petName)
+            .setItems(arrayOf("✏️ Edit Post", "🗑️ Delete Post")) { _, which ->
+                when (which) {
+                    0 -> onEditClick(post)
+                    1 -> onDeleteClick(post)
+                }
             }
-        }
-        popupMenu.show()
+            .show()
     }
 
     class PostViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
