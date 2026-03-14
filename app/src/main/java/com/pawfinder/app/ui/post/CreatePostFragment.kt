@@ -16,6 +16,7 @@ import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.pawfinder.app.R
 import com.pawfinder.app.data.local.DatabaseProvider
 import com.pawfinder.app.data.repository.PostRepository
@@ -64,11 +65,7 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
             selectedImagesAdapter.submitList(selectedImageUris.toList())
 
             if (uris.size > availableSlots) {
-                Toast.makeText(
-                    requireContext(),
-                    "You can select up to 5 images only",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(requireContext(), "You can select up to 5 images only", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -93,19 +90,16 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
         rvSelectedImages = view.findViewById(R.id.rvSelectedImages)
         tvImageError = view.findViewById(R.id.tvImageError)
         progressIndicator = view.findViewById(R.id.progressIndicator)
-
         tilPetName = view.findViewById(R.id.tilPetName)
         tilPetType = view.findViewById(R.id.tilPetType)
         tilStatus = view.findViewById(R.id.tilStatus)
         tilDescription = view.findViewById(R.id.tilDescription)
         tilLocation = view.findViewById(R.id.tilLocation)
-
         etPetName = view.findViewById(R.id.etPetName)
         etPetType = view.findViewById(R.id.etPetType)
         etStatus = view.findViewById(R.id.etStatus)
         etDescription = view.findViewById(R.id.etDescription)
         etLocation = view.findViewById(R.id.etLocation)
-
         btnCreatePost = view.findViewById(R.id.btnCreatePost)
     }
 
@@ -115,7 +109,6 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
             onRemoveClick = { uri -> removeSelectedImage(uri) },
             onAddClick = { openImagePicker() }
         )
-
         rvSelectedImages.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         rvSelectedImages.adapter = selectedImagesAdapter
@@ -123,9 +116,7 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
     }
 
     private fun setupClickListeners() {
-        btnCreatePost.setOnClickListener {
-            handleCreatePost()
-        }
+        btnCreatePost.setOnClickListener { handleCreatePost() }
     }
 
     private fun openImagePicker() {
@@ -159,19 +150,36 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
 
         setLoading(true)
 
-        if (selectedImageUris.isEmpty()) {
-            savePost(petName, petType, status, description, location, "")
-        } else {
-            uploadImagesAndSavePost(petName, petType, status, description, location)
-        }
+        val currentUser = auth.currentUser ?: return
+        val userId = currentUser.uid
+
+        FirebaseFirestore.getInstance()
+            .collection("users")
+            .document(userId)
+            .get()
+            .addOnSuccessListener { doc ->
+                val userName = doc.getString("name") ?: "PawFinder User"
+                val userImageUrl = doc.getString("profileImageUrl") ?: ""
+
+                if (selectedImageUris.isEmpty()) {
+                    savePost(petName, petType, status, description, location, "", userId, userName, userImageUrl)
+                } else {
+                    uploadImagesAndSavePost(petName, petType, status, description, location, userId, userName, userImageUrl)
+                }
+            }
+            .addOnFailureListener {
+                if (selectedImageUris.isEmpty()) {
+                    savePost(petName, petType, status, description, location, "", userId, "PawFinder User", "")
+                } else {
+                    uploadImagesAndSavePost(petName, petType, status, description, location, userId, "PawFinder User", "")
+                }
+            }
     }
 
     private fun uploadImagesAndSavePost(
-        petName: String,
-        petType: String,
-        status: String,
-        description: String,
-        location: String
+        petName: String, petType: String, status: String,
+        description: String, location: String,
+        userId: String, userName: String, userImageUrl: String
     ) {
         uploadedImageUrls.clear()
         var uploadedCount = 0
@@ -185,7 +193,7 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
                     uploadedCount++
                     if (uploadedCount == selectedImageUris.size) {
                         val imageUrlString = uploadedImageUrls.joinToString(",")
-                        savePost(petName, petType, status, description, location, imageUrlString)
+                        savePost(petName, petType, status, description, location, imageUrlString, userId, userName, userImageUrl)
                     }
                 },
                 onError = { error ->
@@ -197,22 +205,15 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
     }
 
     private fun savePost(
-        petName: String,
-        petType: String,
-        status: String,
-        description: String,
-        location: String,
-        imageUrl: String
+        petName: String, petType: String, status: String,
+        description: String, location: String, imageUrl: String,
+        userId: String, userName: String, userImageUrl: String
     ) {
-        val currentUser = auth.currentUser
-        val userId = currentUser?.uid ?: "unknown_user"
-        val userName = currentUser?.displayName ?: "PawFinder User"
-
         val post = Post(
             id = UUID.randomUUID().toString(),
             userId = userId,
             userName = userName,
-            userImageUrl = "",
+            userImageUrl = userImageUrl,
             petName = petName,
             petType = petType,
             status = status,
@@ -229,35 +230,15 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
     }
 
     private fun validateInput(
-        petName: String,
-        petType: String,
-        status: String,
-        description: String,
-        location: String
+        petName: String, petType: String, status: String,
+        description: String, location: String
     ): Boolean {
         var isValid = true
-
-        if (petName.isBlank()) {
-            tilPetName.error = "Pet name is required"
-            isValid = false
-        }
-        if (petType.isBlank()) {
-            tilPetType.error = "Pet type is required"
-            isValid = false
-        }
-        if (status.isBlank()) {
-            tilStatus.error = "Status is required"
-            isValid = false
-        }
-        if (description.isBlank()) {
-            tilDescription.error = "Description is required"
-            isValid = false
-        }
-        if (location.isBlank()) {
-            tilLocation.error = "Location is required"
-            isValid = false
-        }
-
+        if (petName.isBlank()) { tilPetName.error = "Pet name is required"; isValid = false }
+        if (petType.isBlank()) { tilPetType.error = "Pet type is required"; isValid = false }
+        if (status.isBlank()) { tilStatus.error = "Status is required"; isValid = false }
+        if (description.isBlank()) { tilDescription.error = "Description is required"; isValid = false }
+        if (location.isBlank()) { tilLocation.error = "Location is required"; isValid = false }
         return isValid
     }
 
