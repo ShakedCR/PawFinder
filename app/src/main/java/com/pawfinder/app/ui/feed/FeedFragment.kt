@@ -65,13 +65,9 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
         feedAdapter = PostsAdapter(
             showActions = false,
             onPostClick = { post ->
-                val bundle = Bundle().apply {
-                    putString("postId", post.id)
-                }
-                findNavController().navigate(
-                    R.id.action_feedFragment_to_postDetailsFragment,
-                    bundle
-                )
+                val action = FeedFragmentDirections
+                    .actionFeedFragmentToPostDetailsFragment(post.id)
+                findNavController().navigate(action)
             }
         )
 

@@ -59,8 +59,9 @@ class MyPostsFragment : Fragment(R.layout.fragment_my_posts) {
             onEditClick = { post -> handleEditPost(post) },
             onDeleteClick = { post -> showDeleteConfirmationDialog(post) },
             onPostClick = { post ->
-                val bundle = Bundle().apply { putString("postId", post.id) }
-                findNavController().navigate(R.id.action_myPostsFragment_to_postDetailsFragment, bundle)
+                val action = MyPostsFragmentDirections
+                    .actionMyPostsFragmentToPostDetailsFragment(post.id)
+                findNavController().navigate(action)
             }
         )
         rvMyPosts.layoutManager = LinearLayoutManager(requireContext())
@@ -86,8 +87,9 @@ class MyPostsFragment : Fragment(R.layout.fragment_my_posts) {
     }
 
     private fun handleEditPost(post: Post) {
-        val bundle = Bundle().apply { putString("postId", post.id) }
-        findNavController().navigate(R.id.action_myPostsFragment_to_editPostFragment, bundle)
+        val action = MyPostsFragmentDirections
+            .actionMyPostsFragmentToEditPostFragment(post.id)
+        findNavController().navigate(action)
     }
 
     private fun showDeleteConfirmationDialog(post: Post) {

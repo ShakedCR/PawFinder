@@ -44,7 +44,8 @@ class PostDetailsFragment : Fragment(R.layout.fragment_post_details) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        postId = arguments?.getString("postId")
+        val args = PostDetailsFragmentArgs.fromBundle(requireArguments())
+        postId = args.postId
         initViewModel()
         initViews(view)
         observeViewModel()
