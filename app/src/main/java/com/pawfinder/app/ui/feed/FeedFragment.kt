@@ -10,7 +10,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.chip.ChipGroup
-import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.pawfinder.app.R
 import com.pawfinder.app.data.local.DatabaseProvider
 import com.pawfinder.app.data.repository.PostRepository
@@ -27,7 +26,6 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
     private lateinit var rvFeed: RecyclerView
     private lateinit var searchView: SearchView
     private lateinit var chipGroupFilter: ChipGroup
-    private lateinit var progressIndicator: CircularProgressIndicator
     private lateinit var tvEmptyState: TextView
 
     private var allPosts = listOf<Post>()
@@ -60,7 +58,6 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
         rvFeed = view.findViewById(R.id.rvFeed)
         searchView = view.findViewById(R.id.searchView)
         chipGroupFilter = view.findViewById(R.id.chipGroupFilter)
-        progressIndicator = view.findViewById(R.id.progressIndicator)
         tvEmptyState = view.findViewById(R.id.tvEmptyState)
     }
 
@@ -127,7 +124,6 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
         postViewModel.posts.observe(viewLifecycleOwner) { posts ->
             allPosts = posts ?: emptyList()
             isLoading = false
-            progressIndicator.visibility = View.GONE
             applyFilters()
         }
     }
@@ -135,7 +131,6 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
     private fun loadPosts() {
         currentPage = 0
         isLoading = true
-        progressIndicator.visibility = View.VISIBLE
         postViewModel.loadAllPosts()
     }
 

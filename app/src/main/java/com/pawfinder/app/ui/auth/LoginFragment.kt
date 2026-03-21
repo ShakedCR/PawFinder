@@ -1,4 +1,5 @@
 package com.pawfinder.app.ui.auth
+
 import android.os.Bundle
 import android.util.Patterns
 import android.view.View
@@ -26,18 +27,13 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-
         auth = FirebaseAuth.getInstance()
-
         initViews(view)
         setupClickListeners()
     }
 
     override fun onStart() {
         super.onStart()
-
-
         redirectIfUserAlreadyLoggedIn()
     }
 
@@ -51,47 +47,30 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     }
 
     private fun setupClickListeners() {
-
-
         tvGoToRegister.setOnClickListener {
             findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
         }
-
-
         btnLogin.setOnClickListener {
             handleLoginClick()
         }
     }
 
     private fun redirectIfUserAlreadyLoggedIn() {
-
-        val currentUser = auth.currentUser
-
-
-        if (currentUser != null) {
+        if (auth.currentUser != null) {
             navigateToFeedAndClearBackStack()
         }
     }
 
     private fun handleLoginClick() {
-
         clearErrors()
-
         val email = etEmail.text?.toString()?.trim().orEmpty()
         val password = etPassword.text?.toString()?.trim().orEmpty()
-
-
-        if (!validateLoginInput(email, password)) {
-            return
-        }
-
+        if (!validateLoginInput(email, password)) return
         loginUser(email, password)
     }
 
     private fun validateLoginInput(email: String, password: String): Boolean {
-
         var isValid = true
-
         if (email.isBlank()) {
             tilEmail.error = "Email is required"
             isValid = false
@@ -99,7 +78,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             tilEmail.error = "Enter a valid email address"
             isValid = false
         }
-
         if (password.isBlank()) {
             tilPassword.error = "Password is required"
             isValid = false
@@ -107,32 +85,18 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             tilPassword.error = "Password must be at least 6 characters"
             isValid = false
         }
-
         return isValid
     }
 
     private fun loginUser(email: String, password: String) {
-
         btnLogin.isEnabled = false
-
-
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
-
                 btnLogin.isEnabled = true
-
                 if (task.isSuccessful) {
-
-                    Toast.makeText(
-                        requireContext(),
-                        "Login successful",
-                        Toast.LENGTH_SHORT
-                    ).show()
-
+                    Toast.makeText(requireContext(), "Login successful", Toast.LENGTH_SHORT).show()
                     navigateToFeedAndClearBackStack()
-
                 } else {
-
                     Toast.makeText(
                         requireContext(),
                         task.exception?.localizedMessage ?: "Login failed",
@@ -143,21 +107,13 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     }
 
     private fun navigateToFeedAndClearBackStack() {
-
-
         val navOptions = NavOptions.Builder()
             .setPopUpTo(R.id.loginFragment, true)
             .build()
-
-        findNavController().navigate(
-            R.id.feedFragment,
-            null,
-            navOptions
-        )
+        findNavController().navigate(R.id.feedFragment, null, navOptions)
     }
 
     private fun clearErrors() {
-
         tilEmail.error = null
         tilPassword.error = null
     }

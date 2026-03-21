@@ -3,6 +3,8 @@ package com.pawfinder.app.ui.post
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
@@ -40,8 +42,8 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
     private lateinit var tilLocation: TextInputLayout
 
     private lateinit var etPetName: TextInputEditText
-    private lateinit var etPetType: TextInputEditText
-    private lateinit var etStatus: TextInputEditText
+    private lateinit var etPetType: AutoCompleteTextView
+    private lateinit var etStatus: AutoCompleteTextView
     private lateinit var etDescription: TextInputEditText
     private lateinit var etLocation: TextInputEditText
 
@@ -75,6 +77,7 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
         auth = FirebaseAuth.getInstance()
         initViewModel()
         initViews(view)
+        setupSpinners()
         setupRecyclerView()
         setupClickListeners()
     }
@@ -101,6 +104,16 @@ class CreatePostFragment : Fragment(R.layout.fragment_create_post) {
         etDescription = view.findViewById(R.id.etDescription)
         etLocation = view.findViewById(R.id.etLocation)
         btnCreatePost = view.findViewById(R.id.btnCreatePost)
+    }
+
+    private fun setupSpinners() {
+        val petTypes = listOf("Dog", "Cat", "Other")
+        val petTypeAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, petTypes)
+        etPetType.setAdapter(petTypeAdapter)
+
+        val statuses = listOf("Lost", "Found")
+        val statusAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, statuses)
+        etStatus.setAdapter(statusAdapter)
     }
 
     private fun setupRecyclerView() {

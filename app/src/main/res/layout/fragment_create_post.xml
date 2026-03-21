@@ -54,44 +54,48 @@
                         android:inputType="textPersonName" />
                 </com.google.android.material.textfield.TextInputLayout>
 
+                <!-- Pet Type Spinner -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tilPetType"
-                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_medium"
-                    android:hint="Pet Type (Dog / Cat / Other)"
+                    android:hint="Pet Type"
                     app:boxCornerRadiusBottomEnd="@dimen/card_radius"
                     app:boxCornerRadiusBottomStart="@dimen/card_radius"
                     app:boxCornerRadiusTopEnd="@dimen/card_radius"
                     app:boxCornerRadiusTopStart="@dimen/card_radius"
                     app:startIconDrawable="@drawable/ic_add">
 
-                    <com.google.android.material.textfield.TextInputEditText
+                    <AutoCompleteTextView
                         android:id="@+id/etPetType"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="text" />
+                        android:focusable="false"
+                        android:inputType="none" />
                 </com.google.android.material.textfield.TextInputLayout>
 
+                <!-- Status Spinner -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tilStatus"
-                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_medium"
-                    android:hint="Status (Lost / Found)"
+                    android:hint="Status"
                     app:boxCornerRadiusBottomEnd="@dimen/card_radius"
                     app:boxCornerRadiusBottomStart="@dimen/card_radius"
                     app:boxCornerRadiusTopEnd="@dimen/card_radius"
                     app:boxCornerRadiusTopStart="@dimen/card_radius"
                     app:startIconDrawable="@android:drawable/ic_menu_search">
 
-                    <com.google.android.material.textfield.TextInputEditText
+                    <AutoCompleteTextView
                         android:id="@+id/etStatus"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="text" />
+                        android:focusable="false"
+                        android:inputType="none" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
