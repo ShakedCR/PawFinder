@@ -27,7 +27,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Initialize Firebase Authentication
+
         auth = FirebaseAuth.getInstance()
 
         initViews(view)
@@ -37,7 +37,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     override fun onStart() {
         super.onStart()
 
-        // Check if the user is already logged in
+
         redirectIfUserAlreadyLoggedIn()
     }
 
@@ -52,12 +52,12 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
     private fun setupClickListeners() {
 
-        // Navigate to Register screen
+
         tvGoToRegister.setOnClickListener {
             findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
         }
 
-        // Handle Login button click
+
         btnLogin.setOnClickListener {
             handleLoginClick()
         }
@@ -67,7 +67,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
         val currentUser = auth.currentUser
 
-        // If a user session already exists -> go directly to Feed
+
         if (currentUser != null) {
             navigateToFeedAndClearBackStack()
         }
@@ -80,7 +80,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         val email = etEmail.text?.toString()?.trim().orEmpty()
         val password = etPassword.text?.toString()?.trim().orEmpty()
 
-        // Validate user input before sending request to Firebase
+
         if (!validateLoginInput(email, password)) {
             return
         }
@@ -115,7 +115,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
         btnLogin.isEnabled = false
 
-        // Sign in using Firebase Authentication
+
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
 
@@ -144,7 +144,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
     private fun navigateToFeedAndClearBackStack() {
 
-        // Clear Login from back stack so user cannot return with back button
+
         val navOptions = NavOptions.Builder()
             .setPopUpTo(R.id.loginFragment, true)
             .build()

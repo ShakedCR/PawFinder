@@ -17,6 +17,12 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.pawfinder.app.R
 import com.pawfinder.app.data.local.DatabaseProvider
 import com.pawfinder.app.data.repository.PostRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.json.JSONObject
+import java.net.URL
 
 class PostDetailsFragment : Fragment(R.layout.fragment_post_details) {
 
@@ -86,6 +92,38 @@ class PostDetailsFragment : Fragment(R.layout.fragment_post_details) {
             .show()
     }
 
+    private fun fetchPetFact(petType: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val fact = when (petType.lowercase()) {
+                    "dog" -> {
+                        val response = URL("https://dogapi.dog/api/v2/facts").readText()
+                        val json = JSONObject(response)
+                        json.getJSONArray("data")
+                            .getJSONObject(0)
+                            .getJSONObject("attributes")
+                            .getString("body")
+                    }
+                    "cat" -> {
+                        val response = URL("https://catfact.ninja/fact").readText()
+                        val json = JSONObject(response)
+                        json.getString("fact")
+                    }
+                    else -> null
+                }
+
+                withContext(Dispatchers.Main) {
+                    if (fact != null && isAdded) {
+                        cardBreedInfo.visibility = View.VISIBLE
+                        tvBreedInfo.text = fact
+                    }
+                }
+            } catch (e: Exception) {
+                // API נכשל - הכרטיס נשאר מוסתר
+            }
+        }
+    }
+
     private fun setupDots(count: Int) {
         dotsIndicator.removeAllViews()
         val dots = Array(count) { ImageView(requireContext()) }
@@ -144,6 +182,9 @@ class PostDetailsFragment : Fragment(R.layout.fragment_post_details) {
                 } else {
                     chipDetailStatus.setChipBackgroundColorResource(R.color.found_green)
                 }
+
+                // Dog/Cat API
+                fetchPetFact(it.petType)
 
                 if (it.imageUrl.isNotBlank()) {
                     val images = it.imageUrl.split(",").filter { url -> url.isNotBlank() }
