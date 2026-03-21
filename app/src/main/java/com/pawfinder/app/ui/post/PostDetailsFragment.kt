@@ -11,22 +11,20 @@ import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.chip.Chip
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.pawfinder.app.R
 import com.pawfinder.app.data.local.DatabaseProvider
+import com.pawfinder.app.data.repository.PetFactRepository
 import com.pawfinder.app.data.repository.PostRepository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import org.json.JSONObject
-import java.net.URL
 
 class PostDetailsFragment : Fragment(R.layout.fragment_post_details) {
 
     private lateinit var postViewModel: PostViewModel
+    private val petFactRepository = PetFactRepository()
 
     private lateinit var viewPagerImages: ViewPager2
     private lateinit var dotsIndicator: LinearLayout
@@ -94,33 +92,11 @@ class PostDetailsFragment : Fragment(R.layout.fragment_post_details) {
     }
 
     private fun fetchPetFact(petType: String) {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val fact = when (petType.lowercase()) {
-                    "dog" -> {
-                        val response = URL("https://dogapi.dog/api/v2/facts").readText()
-                        val json = JSONObject(response)
-                        json.getJSONArray("data")
-                            .getJSONObject(0)
-                            .getJSONObject("attributes")
-                            .getString("body")
-                    }
-                    "cat" -> {
-                        val response = URL("https://catfact.ninja/fact").readText()
-                        val json = JSONObject(response)
-                        json.getString("fact")
-                    }
-                    else -> null
-                }
-
-                withContext(Dispatchers.Main) {
-                    if (fact != null && isAdded) {
-                        cardBreedInfo.visibility = View.VISIBLE
-                        tvBreedInfo.text = fact
-                    }
-                }
-            } catch (e: Exception) {
-                // API נכשל - הכרטיס נשאר מוסתר
+        viewLifecycleOwner.lifecycleScope.launch {
+            val fact = petFactRepository.getPetFact(petType)
+            if (fact != null && isAdded) {
+                cardBreedInfo.visibility = View.VISIBLE
+                tvBreedInfo.text = fact
             }
         }
     }
@@ -184,7 +160,6 @@ class PostDetailsFragment : Fragment(R.layout.fragment_post_details) {
                     chipDetailStatus.setChipBackgroundColorResource(R.color.found_green)
                 }
 
-                // Dog/Cat API
                 fetchPetFact(it.petType)
 
                 if (it.imageUrl.isNotBlank()) {
